@@ -26,7 +26,7 @@ class IconManager
 	/**
 	 * @throws Exception if $name is invalid
 	 */
-	public function getIconMarkup(string $name, array $options = []) : string
+	public function getMarkup(string $name, array $options = []) : string
 	{
 		$metadata = $this->getMetadata();
 		
