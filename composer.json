@@ -1,0 +1,25 @@
+{
+    "name": "unicarehealth/uch_wac_vis",
+	"description": "Unicare Health | Vector/SVG Icon Set | Composer-packaged (PHP) fork of primer/octicons",
+    "license": "MIT",
+    "authors":[
+		{
+            "name": "Unicare Health",
+            "homepage": "https://www.unicarehealth.com.au",
+			"email": "info@unicarehealth.com.au"
+        }
+    ],
+	"support": {
+		"source": "https://github.com/unicarehealth/octicons"
+    },
+    "require": {
+        "php": "^7.0"
+    },
+    "require-dev": {
+    },
+	"autoload": {
+        "psr-4": {
+            "Uch\\Wac\\Vis\\": "src/"
+        }
+    }
+}
