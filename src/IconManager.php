@@ -6,6 +6,7 @@
 namespace Uch\Wac\Vis;
 
 use stdClass;
+use SimpleXMLElement;
 use Exception;
 use Throwable;
 
@@ -21,6 +22,55 @@ class IconManager
 	{
 		
 	}
+	
+	/**
+	 * @throws Exception if $name is invalid
+	 */
+	public function getIconMarkup(string $name, array $options = []) : string
+	{
+		$metadata = $this->getMetadata();
+		
+		if (!property_exists($metadata, $name))
+		{
+			throw new Exception('Invalid icon name: ' . $name);
+		}
+		
+		$iconMetadata = $metadata->{$name};
+		if (!property_exists($iconMetadata, 'svgElement'))
+		{
+			//Load the XML file data and cache with metadata:
+			$iconMetadata->svgElement = simplexml_load_file(__DIR__ . '/../lib/svg/' . $name . '.svg');	//stdClass simply allows a new property to be set
+		}
+								
+		$svgElement = $iconMetadata->svgElement;
+				
+		//Parse options:
+		if (isset($options['class']) && gettype($options['class']) == 'string')
+		{
+			$svgElement->addAttribute('class', $options['class']);
+		}
+		
+		if (isset($options['title']) && gettype($options['title']) == 'string')
+		{
+			$svgElement->addAttribute('title', $options['title']);
+		}
+				
+		if (isset($options['width']) && gettype($options['width']) == 'integer' && $options['width'] > 0)
+		{
+			$svgElement['width'] = (string)$options['width'] . 'px';
+		}
+		
+		if (isset($options['height']) && gettype($options['height']) == 'integer' && $options['height'] > 0)
+		{
+			$svgElement['height'] = (string)$options['height'] . 'px';
+		}
+				
+		$xmlString = $svgElement->asXML();
+		$xmlString = preg_replace('/^.+\n/', '', $xmlString);	//Remove XML declaration line
+		
+		return $xmlString;
+	}
+	
 	
 	/**
 	 * Gets required CSS as a string to be written in the page.
