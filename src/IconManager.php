@@ -5,16 +5,17 @@
 
 namespace Uch\Wac\Vis;
 
+use stdClass;
 use Exception;
 use Throwable;
 
 class IconManager
 {
-	private _metadataLoaded = false;
-	private _metadata = [];
+	private $_metadataLoaded = false;
+	private $_metadata = [];
 	
-	private _cssLoaded = false;
-	private _css = '';
+	private $_cssLoaded = false;
+	private $_css = '';
 		
 	function __construct()
 	{
@@ -32,7 +33,7 @@ class IconManager
 		{
 			try
 			{
-				$fileTextVal = file_get_contents('/../lib/octicons.css');
+				$fileTextVal = file_get_contents(__DIR__ . '/../lib/octicons.css');
 				if ($fileTextVal === false)
 				{
 					throw new Exception('Unknown reason');
@@ -62,7 +63,7 @@ class IconManager
 		{
 			try
 			{
-				$fileTextVal = file_get_contents('/../lib/data.json');
+				$fileTextVal = file_get_contents(__DIR__ . '/../lib/data.json');
 				if ($fileTextVal === false)
 				{
 					throw new Exception('Unknown reason');
