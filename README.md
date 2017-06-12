@@ -18,23 +18,21 @@ echo $iconManager->law->toSVG(['width' => 32, 'title' => 'Weigh up this option',
 
 i.e. $iconManager->{icon-name}->toSVG(options);
 
-To include the very small CSS in your page, add it to a style element (or $iconManager->getCss(true) includes a style wrapper:
+You may also want to include the tiny CSS in your page as follows:
 ```
-<style type="text/css">
-echo $iconManager->getCss();
-</style>
+echo '<style type="text/css">' . $iconManager->getCss() . '</style>';
+
+//Or simply:
+echo $iconManager->getCss(true);
+
 ```
 
 #### ZF3 (Zend Framework)
 1) Add the view helper reference to your module config (aliased here as 'icons'):
 ```
 'view_helpers' => [
-		'invokables' => [
-				\Uch\Wac\Vis\Zf\IconViewHelper::class => \Uch\Wac\Vis\Zf\IconViewHelper::class
-			],
-			'aliases' => [
-				'icons' => \Uch\Wac\Vis\Zf\IconViewHelper::class
-			]
+		'invokables' => [\Uch\Wac\Vis\Zf\IconViewHelper::class => \Uch\Wac\Vis\Zf\IconViewHelper::class],
+			'aliases' => [icons' => \Uch\Wac\Vis\Zf\IconViewHelper::class]
 		];
 ```
 
