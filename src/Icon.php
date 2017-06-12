@@ -7,32 +7,33 @@
 namespace Uch\Wac\Vis;
 
 use SimpleXMLElement;
+use stdClass;
 
 class Icon
 {
 	private $_nsPrefix = 's';
 	private $_nsUri = 'http://www.w3.org/2000/svg';
 
-	private $_metadata = [];
+	private $_options = [];
 	private $_element = null;
 
-	function __construct(SimpleXMLElement $element, array $metadata)
+	function __construct(SimpleXMLElement $element, stdClass $metadata)
 	{
 		$this->_element = $element;
-		$this->_metadata = $metadata;
 
-		if (!property_exists($this->_metadata, 'options'))
+		if (!property_exists($metadata, 'options'))
 		{
 			//Add default html element attributes and cache with metadata:
-			$this->_metadata->options = [
-										'version' => '1.1',
-										'width' => $this->_element['width'],
-										'height' => $this->_element['height'],
-										'viewBox' => (string)$this->_element['viewBox'],
-										'class' => "octicon octicon-" . $this->_element['symbol'],
-										'aria-hidden' => 'true'
-									];
+			$metadata->options = [
+									'version' => '1.1',
+									'width' => $this->_element['width'],
+									'height' => $this->_element['height'],
+									'viewBox' => (string)$this->_element['viewBox'],
+									'class' => "octicon octicon-" . $this->_element['symbol'],
+									'aria-hidden' => 'true'
+								];
 		}
+		$this->_options = $metadata->options;
 	}
 
 	/**
@@ -63,12 +64,12 @@ class Icon
 	public function getHtmlAttributes(array $options = []) : string
 	{
 		//Merging options may lose important defaults, so these are fixed below:
-		$htmlAttributes = array_merge($this->_metadata->options, $options);
+		$htmlAttributes = array_merge($this->_options, $options);
 
 		//Parse options:
 		if (isset($options['class']) && gettype($options['class']) == 'string')
 		{
-			$htmlAttributes['class'] = $this->_metadata->options['class'] . rtrim(' ' . $options['class']);
+			$htmlAttributes['class'] = $this->_options['class'] . rtrim(' ' . $options['class']);
 		}
 
 		$widthSet = isset($options['width']) && gettype($options['width']) == 'integer' && $options['width'] > 0;
@@ -76,8 +77,8 @@ class Icon
 		if ($widthSet || $heightSet)
 		{
 			//intval() parses the number until 'px':
-			$spriteWidth = (float)intval($this->_metadata->options['width']);
-			$spriteHeight = (float)intval($this->_metadata->options['height']);
+			$spriteWidth = (float)intval($this->_options['width']);
+			$spriteHeight = (float)intval($this->_options['height']);
 
 			$newWidth = ($widthSet) ? $options["width"] : intval($options["height"] * $spriteWidth / $spriteHeight);
 			$newHeight = ($heightSet) ? $options["height"] : intval($options["width"] * $spriteHeight / $spriteWidth);

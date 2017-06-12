@@ -24,17 +24,32 @@ class IconManager
 	function __construct() {}
 
 	/**
+	 * Overload/magic method to allow named icons to be requested as a property.
+	 * @throws Exception if $name is invalid
+	 */
+	public function __get(string $iconName) : Icon
+	{		
+		return $this->getIcon($iconName);
+	}
+	
+	/**
+	 * Gets the named Icon instance.
+	 * @throws Exception if $name is invalid
+	 */
+	public function getIcon(string $name) : Icon
+	{
+		$element = $this->getSvgElement($name);
+		$iconMetadata = $this->getMetadata()->{$name};
+		return new Icon($element, $iconMetadata);
+	}
+	
+	/**
 	 * Gets SVG element markup.
 	 * @throws Exception if $name is invalid
 	 */
 	public function toSVG(string $name, array $options = []) : string
 	{
-		$pathElement = $this->getSvgElement($name)->xpath('//' . $this->_nsPrefix . ':path')[0];
-
-		$xmlString = $pathElement->asXML();
-		$xmlString = preg_replace('/^.+\n/', '', $xmlString);	//Remove XML declaration line
-
-		return '<svg ' . $this->getHtmlAttributes($name, $options) . '>' . $xmlString . '</svg>';
+		return $this->getIcon($name)->toSVG($options);
 	}
 
 	/**
@@ -44,69 +59,7 @@ class IconManager
 	 */
 	public function toSVGUse(string $name, array $options = []) : string
 	{
-		return '<svg ' . $this->getHtmlAttributes($name, $options) . '><use xlink:href="#' . $name . '"/></svg>';
-	}
-
-	/**
-	 * Gets HTML element attributes as a string.
-	 * @throws Exception if $name is invalid
-	 */
-	public function getHtmlAttributes(string $name, array $options = []) : string
-	{
-		$svgElement = $this->getSvgElement($name);
-		$iconMetadata = $this->getMetadata()->{$name};
-
-		if (!property_exists($iconMetadata, 'options'))
-		{
-			//Add default html element attributes and cache with metadata:
-			$iconMetadata->options = [
-										'version' => '1.1',
-										'width' => $svgElement['width'],
-										'height' => $svgElement['height'],
-										'viewBox' => (string)$svgElement['viewBox'],
-										'class' => "octicon octicon-" . $name,
-										'aria-hidden' => 'true'
-									];
-		}
-
-		//Merging options may lose important defaults, so these are fixed below:
-		$htmlAttributes = array_merge($iconMetadata->options, $options);
-
-		//Parse options:
-		if (isset($options['class']) && gettype($options['class']) == 'string')
-		{
-			$htmlAttributes['class'] = $iconMetadata->options['class'] . rtrim(' ' . $options['class']);
-		}
-
-		$widthSet = isset($options['width']) && gettype($options['width']) == 'integer' && $options['width'] > 0;
-		$heightSet = isset($options['height']) && gettype($options['height']) == 'integer' && $options['height'] > 0;
-		if ($widthSet || $heightSet)
-		{
-			//intval() parses the number until 'px':
-			$spriteWidth = (float)intval($iconMetadata->options['width']);
-			$spriteHeight = (float)intval($iconMetadata->options['height']);
-
-			$newWidth = ($widthSet) ? $options["width"] : intval($options["height"] * $spriteWidth / $spriteHeight);
-			$newHeight = ($heightSet) ? $options["height"] : intval($options["width"] * $spriteHeight / $spriteWidth);
-
-			$htmlAttributes['width'] = sprintf('%dpx', $newWidth);
-			$htmlAttributes['height'] = sprintf('%dpx', $newHeight);
-		}
-
-		if (isset($options['aria-label']) && gettype($options['aria-label']) == 'string')
-		{
-			$htmlAttributes['role'] = 'img';
-			unset($htmlAttributes['aria-hidden']); //un-hide the icon
-		}
-
-		$cleanHtmlAttributes = [];
-		foreach($htmlAttributes as $key => $value)
-		{
-			if (gettype($value) != 'string') continue;
-			$cleanHtmlAttributes[] = $key .'="'. htmlspecialchars($value) .'"';
-		}
-
-		return implode(' ', $cleanHtmlAttributes);
+		return $this->getIcon($name)->toSVGUse($options);
 	}
 
 	/**
