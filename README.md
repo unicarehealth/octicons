@@ -32,7 +32,7 @@ echo $iconManager->getCss(true);
 ```
 'view_helpers' => [
 		'invokables' => [\Uch\Wac\Vis\Zf\IconViewHelper::class => \Uch\Wac\Vis\Zf\IconViewHelper::class],
-			'aliases' => [icons' => \Uch\Wac\Vis\Zf\IconViewHelper::class]
+		'aliases' => [icons' => \Uch\Wac\Vis\Zf\IconViewHelper::class]
 		];
 ```
 
