@@ -12,9 +12,6 @@ use Throwable;
 
 class IconManager
 {
-	private $_nsPrefix = 's';
-	private $_nsUri = 'http://www.w3.org/2000/svg';
-
 	private $_metadataLoaded = false;
 	private $_metadata = [];
 
@@ -130,7 +127,6 @@ class IconManager
 		{
 			//Load the XML file data and cache with metadata:
 			$iconMetadata->svgElement = simplexml_load_file(__DIR__ . '/../lib/svg/' . $name . '.svg');	//stdClass simply allows a new property to be set
-			$iconMetadata->svgElement->registerXPathNamespace($this->_nsPrefix, $this->_nsUri);
 			$iconMetadata->svgElement->addAttribute('symbol', $name);
 		}
 

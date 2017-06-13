@@ -11,8 +11,8 @@ use stdClass;
 
 class Icon
 {
-	private $_nsPrefix = 's';
-	private $_nsUri = 'http://www.w3.org/2000/svg';
+	//public const $NAMESPACE_PREFIX	= 's';
+	//public const $NAMESPACE_URI		= 'http://www.w3.org/2000/svg';
 
 	private $_options = [];
 	private $_element = null;
@@ -20,6 +20,7 @@ class Icon
 	function __construct(SimpleXMLElement $element, stdClass $metadata)
 	{
 		$this->_element = $element;
+		//$this->_element->registerXPathNamespace($self::NAMESPACE_PREFIX, $self::NAMESPACE_URI);
 
 		if (!property_exists($metadata, 'options'))
 		{
@@ -41,12 +42,7 @@ class Icon
 	 */
 	public function toSVG(array $options = []) : string
 	{
-		$pathElement = $this->_element->xpath('//' . $this->_nsPrefix . ':path')[0];
-
-		$xmlString = $pathElement->asXML();
-		$xmlString = preg_replace('/^.+\n/', '', $xmlString);	//Remove XML declaration line
-
-		return '<svg ' . $this->getHtmlAttributes($options) . '>' . $xmlString . '</svg>';
+		return '<svg ' . $this->getHtmlAttributes($options) . '>' . $this->getInnerMarkup() . '</svg>';
 	}
 
 	/**
@@ -57,24 +53,48 @@ class Icon
 	{
 		return '<svg ' . $this->getHtmlAttributes($options) . '><use xlink:href="#' . $this->_element['symbol'] . '"/></svg>';
 	}
-	
+
 	/**
 	 * Gets element markup for an SVG symbol to be used in a spritesheet.
-	 * E.g. 		
+	 * E.g.
 	 *	<symbol viewBox="0 0 16 16" id="alert">
 	 *		<path fill-rule="evenodd" d="M8.865 ..."/>
 	 *	</symbol>
 	 */
 	public function toSVGSymbol() : string
-	{			
-		$pathElement = $this->_element->xpath('//' . $this->_nsPrefix . ':path')[0];
-
-		$xmlString = $pathElement->asXML();
-		$xmlString = preg_replace('/^.+\n/', '', $xmlString);	//Remove XML declaration line
-
-		return '<symbol viewBox="' . $this->_options['viewBox'] . '" id="' . $this->_element['symbol'] . '">' . $xmlString . '</symbol>';
+	{
+		return '<symbol viewBox="' . $this->_options['viewBox'] . '" id="' . $this->_element['symbol'] . '">' . $this->getInnerMarkup() . '</symbol>';
 	}
-	
+
+	/**
+	 * Gets the SVG element inner XML. This performs basic minimisation of the full SVG markup.
+	 */
+	protected function getInnerMarkup() : string
+	{
+		$allXml = '';
+		
+		foreach ($this->_element->children() as $childNode)
+		{
+			$childName = $childNode->getName();
+			if (in_array($childName, ['title', 'desc'])) continue;
+			if ($childName == 'defs' && $childNode->count() == 0) continue;
+				
+			$xmlString = $childNode->asXML();
+			if ($childName == 'g')
+			{
+				$xmlString = str_replace(' id="' . $this->_element['symbol'] . '"', '', $xmlString);				
+				$xmlString = str_replace(' id="Octicons"', '', $xmlString);
+				$xmlString = str_replace(' stroke="none"', '', $xmlString);
+				$xmlString = str_replace(' fill="none"', '', $xmlString);								
+				$xmlString = preg_replace('/>(\s+|\t+|\n+)</', '><', $xmlString);	//Remove tabs, line breaks, etc... between elements
+			}
+			
+			$allXml .= trim($xmlString);
+		}
+		
+		return $allXml;
+	}
+
 	/**
 	 * Gets HTML element attributes as a string.
 	 */
