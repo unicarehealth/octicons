@@ -27,10 +27,10 @@ class Icon
 			//Add default html element attributes and cache with metadata:
 			$metadata->options = [
 									'version' => '1.1',
-									'width' => $this->_element['width'],
-									'height' => $this->_element['height'],
+									'width' => (string)$this->_element['width'],
+									'height' => (string)$this->_element['height'],
 									'viewBox' => (string)$this->_element['viewBox'],
-									'class' => "octicon octicon-" . $this->_element['symbol'],
+									'class' => "octicon octicon-" . (string)$this->_element['symbol'],
 									'aria-hidden' => 'true'
 								];
 		}
@@ -102,7 +102,7 @@ class Icon
 	{
 		//Merging options may lose important defaults, so these are fixed below:
 		$htmlAttributes = array_merge($this->_options, $options);
-
+		
 		//Parse options:
 		if (isset($options['class']) && gettype($options['class']) == 'string')
 		{
@@ -123,7 +123,7 @@ class Icon
 			$htmlAttributes['width'] = sprintf('%dpx', $newWidth);
 			$htmlAttributes['height'] = sprintf('%dpx', $newHeight);
 		}
-
+	
 		if (isset($options['aria-label']) && gettype($options['aria-label']) == 'string')
 		{
 			$htmlAttributes['role'] = 'img';
