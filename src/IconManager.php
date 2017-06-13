@@ -20,7 +20,7 @@ class IconManager
 
 	private $_cssLoaded = false;
 	private $_css = '';
-	
+
 	function __construct() {}
 
 	/**
@@ -28,21 +28,21 @@ class IconManager
 	 * @throws Exception if $name is invalid
 	 */
 	public function __get(string $iconName) : Icon
-	{		
+	{
 		return $this->getIcon($iconName);
 	}
-	
+
 	/**
 	 * Gets the named Icon instance.
 	 * @throws Exception if $name is invalid
 	 */
 	public function getIcon(string $name) : Icon
 	{
-		$element = $this->getSvgElement($name);
+		$element = $this->getSVGElement($name);
 		$iconMetadata = $this->getMetadata()->{$name};
 		return new Icon($element, $iconMetadata);
 	}
-	
+
 	/**
 	 * Gets SVG element markup.
 	 * @throws Exception if $name is invalid
@@ -63,10 +63,10 @@ class IconManager
 		return $icon->toSVGUse($options);
 	}
 
-	/** 
+	/**
 	 * Gets markup for a hidden sprite-sheet for icons that have already been loaded via toSVG() or toSVGUse().
 	 * We could know which icons have been used if the only way to get them was toSVGUse() in this class, but
-	 * the magic method allows icons to be passed back individually, and then we don't know how they were used 
+	 * the magic method allows icons to be passed back individually, and then we don't know how they were used
 	 * (inline or use).
 	 *
 	 * E.g.
@@ -76,47 +76,47 @@ class IconManager
 	 *		</symbol>
 	 *		<symbol viewBox="0 0 10 16" id="arrow-down">
 	 *			<path fill-rule="evenodd" d="M7 ..."/>
-	 *		</symbol>			
+	 *		</symbol>
 	 *	</svg>
 	 */
 	public function getSVGSpritesheet() : string
 	{
 		/*
-		
+
 		*/
-		
+
 		$ml = '';
 		$metadata = $this->getMetadata();
 		foreach (get_object_vars($metadata) as $name => $iconMetadata)
 		{
 			//$iconMetadata = $metadata->{$name};
 			//if (!property_exists($iconMetadata, 'svgElement')) continue;
-			
+
 			if (!property_exists($iconMetadata, 'svgElement')) continue;
-			
+
 			$ml .= $this->getIcon($name)->toSVGSymbol();
 		}
-					
+
 		// $ml = '';
 		// foreach ($this->_usedNames as $name)
 		// {
 			// $ml .= $this->getIcon($name)->toSVGSymbol();
 		// }
-		
+
 		if ($ml != '')
 		{
 			$ml = '<svg style="width:0;height:0;visibility:hidden;">' . $ml . '</svg>';
 		}
-		
+
 		return $ml;
 	}
-	
+
 	/**
 	 * Gets the SVG element.
 	 * Loads and caches it for repeated use.
 	 * @throws Exception if $name is invalid
 	 */
-	public function getSvgElement(string $name) : SimpleXMLElement
+	public function getSVGElement(string $name) : SimpleXMLElement
 	{
 		$metadata = $this->getMetadata();
 
@@ -142,7 +142,7 @@ class IconManager
 	 * @param bool $wrapInStyleElement Optional parameter allowing the css to be wrapped in an HTML style element.
 	 * @throws Exception on error
 	 */
-	public function getCss(bool $wrapInStyleElement = false) : string
+	public function getCSS(bool $wrapInStyleElement = false) : string
 	{
 		if (!$this->_cssLoaded)
 		{

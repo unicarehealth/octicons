@@ -20,10 +20,10 @@ i.e. $iconManager->{icon-name}->toSVG(options);
 
 You may also want to include the tiny CSS in your page as follows:
 ```php
-echo '<style type="text/css">' . $iconManager->getCss() . '</style>';
+echo '<style type="text/css">' . $iconManager->getCSS() . '</style>';
 
 //Or simply:
-echo $iconManager->getCss(true);
+echo $iconManager->getCSS(true);
 
 ```
 
@@ -38,7 +38,7 @@ echo $iconManager->getCss(true);
 
 2) Include the following in your layout.phtml (before writing headStyle to the page):
 ```php
-$this->headStyle()->prependStyle($this->icons()->getCss());
+$this->headStyle()->prependStyle($this->icons()->getCSS());
 ```
 
 3) Inline or with spritesheet - use as follows within any of your .phtml files:
