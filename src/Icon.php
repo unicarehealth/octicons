@@ -57,11 +57,28 @@ class Icon
 	{
 		return '<svg ' . $this->getHtmlAttributes($options) . '><use xlink:href="#' . $this->_element['symbol'] . '"/></svg>';
 	}
+	
+	/**
+	 * Gets element markup for an SVG symbol to be used in a spritesheet.
+	 * E.g. 		
+	 *	<symbol viewBox="0 0 16 16" id="alert">
+	 *		<path fill-rule="evenodd" d="M8.865 ..."/>
+	 *	</symbol>
+	 */
+	public function toSVGSymbol() : string
+	{			
+		$pathElement = $this->_element->xpath('//' . $this->_nsPrefix . ':path')[0];
 
+		$xmlString = $pathElement->asXML();
+		$xmlString = preg_replace('/^.+\n/', '', $xmlString);	//Remove XML declaration line
+
+		return '<symbol viewBox="' . $this->_options['viewBox'] . '" id="' . $this->_element['symbol'] . '">' . $xmlString . '</symbol>';
+	}
+	
 	/**
 	 * Gets HTML element attributes as a string.
 	 */
-	public function getHtmlAttributes(array $options = []) : string
+	protected function getHtmlAttributes(array $options = []) : string
 	{
 		//Merging options may lose important defaults, so these are fixed below:
 		$htmlAttributes = array_merge($this->_options, $options);

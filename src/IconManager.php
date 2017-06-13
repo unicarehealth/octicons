@@ -20,7 +20,7 @@ class IconManager
 
 	private $_cssLoaded = false;
 	private $_css = '';
-
+	
 	function __construct() {}
 
 	/**
@@ -59,9 +59,58 @@ class IconManager
 	 */
 	public function toSVGUse(string $name, array $options = []) : string
 	{
-		return $this->getIcon($name)->toSVGUse($options);
+		$icon = $this->getIcon($name);
+		return $icon->toSVGUse($options);
 	}
 
+	/** 
+	 * Gets markup for a hidden sprite-sheet for icons that have already been loaded via toSVG() or toSVGUse().
+	 * We could know which icons have been used if the only way to get them was toSVGUse() in this class, but
+	 * the magic method allows icons to be passed back individually, and then we don't know how they were used 
+	 * (inline or use).
+	 *
+	 * E.g.
+	 * <svg xmlns="http://www.w3.org/2000/svg" style="width:0;height:0;visibility:hidden;">
+	 *		<symbol viewBox="0 0 16 16" id="alert">
+	 *			<path fill-rule="evenodd" d="M8.865 ..."/>
+	 *		</symbol>
+	 *		<symbol viewBox="0 0 10 16" id="arrow-down">
+	 *			<path fill-rule="evenodd" d="M7 ..."/>
+	 *		</symbol>			
+	 *	</svg>
+	 */
+	public function getSVGSpritesheet() : string
+	{
+		/*
+		
+		*/
+		
+		$ml = '';
+		$metadata = $this->getMetadata();
+		foreach (get_object_vars($metadata) as $name => $iconMetadata)
+		{
+			//$iconMetadata = $metadata->{$name};
+			//if (!property_exists($iconMetadata, 'svgElement')) continue;
+			
+			if (!property_exists($iconMetadata, 'svgElement')) continue;
+			
+			$ml .= $this->getIcon($name)->toSVGSymbol();
+		}
+					
+		// $ml = '';
+		// foreach ($this->_usedNames as $name)
+		// {
+			// $ml .= $this->getIcon($name)->toSVGSymbol();
+		// }
+		
+		if ($ml != '')
+		{
+			$ml = '<svg style="width:0;height:0;visibility:hidden;">' . $ml . '</svg>';
+		}
+		
+		return $ml;
+	}
+	
 	/**
 	 * Gets the SVG element.
 	 * Loads and caches it for repeated use.
@@ -123,7 +172,7 @@ class IconManager
 	 * Gets required metadata as a stdClass with a property for each icon.
 	 * @throws Exception on error
 	 */
-	public function getMetadata() : stdClass
+	protected function getMetadata() : stdClass
 	{
 		if (!$this->_metadataLoaded)
 		{
