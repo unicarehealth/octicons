@@ -42,8 +42,10 @@ $this->headStyle()->prependStyle($this->icons()->getCss());
 ```
 
 3) Inline or with spritesheet - use as follows within any of your .phtml files:
+
 Inline:
 echo $this->icons()->{name}->toSVG(options);
+
 
 Referring to spritesheet definitions:
 echo $this->icons()->{name}->toSVGUse(options);
