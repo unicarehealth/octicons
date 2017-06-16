@@ -84,6 +84,7 @@ class Icon
 			{
 				$xmlString = str_replace(' id="' . $this->_element['symbol'] . '"', '', $xmlString);				
 				$xmlString = str_replace(' id="Octicons"', '', $xmlString);
+				$xmlString = str_replace(' id="Shape"', '', $xmlString);
 				$xmlString = str_replace(' stroke="none"', '', $xmlString);
 				$xmlString = str_replace(' fill="none"', '', $xmlString);								
 				$xmlString = preg_replace('/>(\s+|\t+|\n+)</', '><', $xmlString);	//Remove tabs, line breaks, etc... between elements
