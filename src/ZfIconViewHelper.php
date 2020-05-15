@@ -1,11 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Uch\Wac\Vis\Zf;
+namespace Uch\Wac\Vis;
 
-use Zend\View\Helper\AbstractHelper;
-use Uch\Wac\Vis\IconManager;
+use Laminas\View\Helper\AbstractHelper;
 
-class IconViewHelper extends AbstractHelper
+class ZfIconViewHelper extends AbstractHelper
 {
 	private $_iconManager = null;
 
